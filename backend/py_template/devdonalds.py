@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Dict, Union
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 import re
 
 # ==== Type Definitions, feel free to add or modify ===========================
@@ -28,7 +28,8 @@ class Ingredient(CookbookEntry):
 app = Flask(__name__)
 
 # Store your recipes here!
-cookbook = None
+cookbook = list()
+cookbook_names = list()
 
 # Task 1 helper (don't touch)
 @app.route("/parse", methods=['POST'])
@@ -64,6 +65,51 @@ def parse_handwriting(recipeName: str) -> Union[str | None]:
 @app.route('/entry', methods=['POST'])
 def create_entry():
 	# TODO: implement me
+
+	data = request.get_json()
+	print(cookbook)
+
+	type = data.get('type', '')
+	entry = CookbookEntry(data.get('name', ''))
+	cookTime = data.get('cookTime', '')
+	requiredItems = data.get('requiredItems', '')
+
+	
+	if type is None or entry is None:
+		return "asd", 400
+	
+	if entry.name in cookbook_names:
+		return 'ewr', 400
+	else:
+		cookbook_names.append(entry.name)
+
+
+	items = list()
+	if type == "recipe":
+		recipe = Recipe(entry, list())
+		item_names = list()
+		for item in requiredItems:
+			name = item['name']
+			quantity = int(item['quantity'])
+			if name not in item_names:
+				item_names.append(name)
+				recipe.required_items.append(RequiredItem(name, quantity))
+			else:
+				return "ksjdf", 400
+
+		if recipe not in cookbook:
+			cookbook.append(recipe)
+			return '', 200
+
+	if type == "ingredient":
+		ingredient = Ingredient(entry, cookTime)
+		if ingredient.cook_time < 0:
+			return "", 400
+		
+		if ingredient not in cookbook:
+			cookbook.append(ingredient)
+			return '', 200
+
 	return 'not implemented', 500
 
 
