@@ -76,10 +76,10 @@ def create_entry():
 
 	
 	if type is None or entry is None:
-		return "asd", 400
+		return "", 400
 	
 	if entry.name in cookbook_names:
-		return 'ewr', 400
+		return '', 400
 	else:
 		cookbook_names.append(entry.name)
 
@@ -95,7 +95,7 @@ def create_entry():
 				item_names.append(name)
 				recipe.required_items.append(RequiredItem(name, quantity))
 			else:
-				return "ksjdf", 400
+				return "", 400
 
 		if recipe not in cookbook:
 			cookbook.append(recipe)
