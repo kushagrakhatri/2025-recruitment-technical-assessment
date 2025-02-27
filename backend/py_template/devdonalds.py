@@ -44,7 +44,19 @@ def parse():
 # Takes in a recipeName and returns it in a form that 
 def parse_handwriting(recipeName: str) -> Union[str | None]:
 	# TODO: implement me
-	return recipeName
+
+	if recipeName == "":
+		return None
+
+
+	recipeName = recipeName.replace("-", " ").replace("_", " ")
+	words = list()
+	for word in recipeName.split():
+		word = "".join(c for c in word if c.isalpha())  # keep only valid letters
+		word = word.title()
+		words.append(word)
+		
+	return " ".join(words)
 
 
 # [TASK 2] ====================================================================
